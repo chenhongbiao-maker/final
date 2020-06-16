@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+    <meta charset="utf-8">
+    <title>人力资源管理系统</title>
+
+    <meta name="description" content="Dashboard">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!--Basic Styles-->
+    <link href="/static/style/bootstrap.css" th:href="@{/style/bootstrap.css}" rel="stylesheet">
+    <link href="/static/style/font-awesome.css" th:href="@{/style/font-awesome.css}" rel="stylesheet">
+    <link href="/static/style/weather-icons.css" th:href="@{/style/weather-icons.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+    <!--Beyond styles-->
+    <link id="beyond-link" href="/static/style/beyond.css" th:href="@{/style/beyondt.css}" rel="stylesheet" type="text/css">
+    <link href="/static/style/demo.css" th:href="@{/style/demo.css}" rel="stylesheet">
+    <link href="/static/style/typicons.css" th:href="@{/style/typicons.css}" rel="stylesheet">
+    <link href="/static/style/animate.css" th:href="@{/style/animate.css}" rel="stylesheet">
+
+    <script type="text/javascript" th:inline="javascript">
+        var basePath = [[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]];
+        function checksalary() {
+            var emp_name=document.getElementById("emp_name");
+            var value=emp_name.value;
+            var emp_id=document.getElementById("emp_id");
+            var salary=document.getElementById("salary");
+            if(value!=null){
+                $.ajax({
+                    url: basePath + '/checksalary',
+                    type: "post",
+                    data: {"emp_name":value},
+                    datatype: "json",
+                    success:function(data){
+
+                        if(null != data && "" != data){
+                            emp_id.value=data.emp_id;
+                            salary.value=data.job_money;
+                        }
+
+                    }
+                })
+            }
+
+        }
+
+        function getmoney() {
+            var month=document.getElementById("month");
+            var emp_id=document.getElementById("emp_id");
+            var overtime_salary=document.getElementById("overtime_salary");
+            var leave_salary=document.getElementById("leave_salary");
+            var salary=document.getElementById("salary");
+            var resalary=document.getElementById("resalary");
+            if(emp_id.value!=null){
+                $.ajax({
+                    url: basePath + '/getmoney',
+                    type: "post",
+                    data: {"emp_id":emp_id.value,"month":month.value},
+                    datatype: "json",
+                    success:function(data){
+
+                        if(null != data && "" != data){
+                            overtime_salary.value=data.over_money.toFixed(1);
+                            leave_salary.value=data.leave_money.toFixed(1);
+                            resalary.value=(salary.value*1-leave_salary.value*1+overtime_salary.value*1).toFixed(1);
+                        }
+
+                    }
+                })
+            }
+
+        }
+
+        function salaryadd() {
+            var leave_salary=document.getElementById("leave_salary");
+            var overtime_salary=document.getElementById("overtime_salary");
+            var emp_name=document.getElementById("emp_name").value;
+            var emp_id=document.getElementById("emp_id").value;
+            var salary=document.getElementById("salary");
+            var resalary=document.getElementById("resalary");
+
+            var help1=document.getElementById("help1");
+            var help2=document.getElementById("help2");
+            var help3=document.getElementById("help3");
+            var help4=document.getElementById("help4");
+            var help5=document.getElementById("help5");
+            var tag=true;
+
+            if(!/^[0-9,.]*$/.test(leave_salary.value)){
+                help2.style.display='none';
+                help1.style.display='none';
+                help3.style.display='';
+                help4.style.display='none';
+                help5.style.display='none';
+                return false;
+            }else if(!/^[0-9,.]*$/.test(overtime_salary.value)){
+                help2.style.display='none';
+                help1.style.display='none';
+                help3.style.display='none';
+                help4.style.display='';
+                help5.style.display='none';
+                return false;
+            }else if(!/^[0-9,.]*$/.test(salary.value)){
+                help2.style.display='';
+                help1.style.display='none';
+                help3.style.display='none';
+                help4.style.display='none';
+                help5.style.display='none';
+                return false;
+            }else if(!/^[0-9,.]*$/.test(resalary.value)){
+                help2.style.display='none';
+                help1.style.display='none';
+                help3.style.display='none';
+                help4.style.display='none';
+                help5.style.display='';
+                return false;
+            }
+
+            $.ajax({
+                url: basePath + '/attendance/checkname',
+                type: "post",
+                async:false,
+                data: {"emp_name":emp_name,"emp_id":emp_id},
+                datatype: "json",
+                success:function(data){
+                    if(data ==null || "" == data){
+                        tag=false;
+                    }
+                },
+                error:function (data) {
+                    alert("出错了！");
+                }
+            })
+            if(tag==false){
+                help1.style.display='';
+                help2.style.display='none';
+                help3.style.display='none';
+                help4.style.display='none';
+                help5.style.display='none';
+                return false;
+            }
+
+        }
+
+
+
+
+
+    </script>
+
+</head>
+<body>
+<!-- 头部 -->
+<div th:include="emp/top1 :: copy1"  ></div>
+
+<!-- /头部 -->
+
+<div class="main-container container-fluid">
+    <div class="page-container">
+        <!-- Page Sidebar -->
+        <div th:include="emp/left1 :: cope1"  ></div>
+        <!-- /Page Sidebar -->
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Page Breadcrumb -->
+            <div class="page-breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="#" th:href="@{/system/list1}">系统</a>
+                    </li>
+                    <li>
+                        <a href="" th:href="@{/salary/list1}">工资列表</a>
+                    </li>
+                    <li class="active">修改工资</li>
+                </ul>
+            </div>
+            <!-- /Page Breadcrumb -->
+
+            <!-- Page Body -->
+            <div class="page-body">
+
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-xs-12">
+                        <div class="widget">
+                            <div class="widget-header bordered-bottom bordered-blue">
+                                <span class="widget-caption">修改工资</span>
+                            </div>
+                            <div class="widget-body">
+                                <div id="horizontal-form">
+                                    <form class="form-horizontal" onsubmit="return salaryadd()"   role="form" action="" th:action="@{/salary/edit1(salary_id=${salary.getSalary_id()})}" method="post">
+                                        <div class="form-group">
+                                            <label for="emp_name" class="col-sm-2 control-label no-padding-right">员工名称</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" th:value="${salary.getEmp_name()}" id="emp_name" placeholder="" name="emp_name" required=""   type="text" onchange="checksalary()">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="emp_id" class="col-sm-2 control-label no-padding-right">员工ID</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" th:value="${salary.getEmp_id()}" id="emp_id" placeholder="" name="emp_id" required=""  type="text">
+                                            </div>
+                                            <p class="help-block col-sm-4 red" id="help1" style="display: none">请正确填写员工名或ID</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="salary" class="col-sm-2 control-label no-padding-right">基本工资</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" th:value="${salary.getSalary()}" id="salary" placeholder=""  name="salary" required=""  type="text">
+                                            </div>
+                                            <p class="help-block col-sm-4 red" id="help2" style="display: none">请输入正确格式</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="month" class="col-sm-2 control-label no-padding-right">薪资年月</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" id="month"  placeholder="" name="month" required="" onchange="getmoney()" type="month">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="leave_salary" class="col-sm-2 control-label no-padding-right">工资扣款</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" id="leave_salary" th:value="${salary.getLeave_salary()}" placeholder="" name="leave_salary" required=""  type="text">
+                                            </div>
+                                            <p class="help-block col-sm-4 red" id="help3" style="display: none">请输入正确格式</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="overtime_salary" class="col-sm-2 control-label no-padding-right">加班奖金</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" id="overtime_salary" th:value="${salary.getOvertime_salary()}" placeholder="" name="overtime_salary" required=""  type="text">
+                                            </div>
+                                            <p class="help-block col-sm-4 red" id="help4" style="display: none">请输入正确格式</p>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="resalary" class="col-sm-2 control-label no-padding-right">实际工资</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" id="resalary" placeholder="" th:value="${salary.getResalary()}" name="resalary" required="" type="text">
+                                            </div>
+                                            <p class="help-block col-sm-4 red" id="help5" style="display: none">请输入正确格式</p>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <button type="submit"   class="btn btn-default"  >修改信息</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /Page Body -->
+        </div>
+        <!-- /Page Content -->
+    </div>
+</div>
+
+<!--Basic Scripts-->
+<script src="/static/style/jquery_002.js" th:src="@{/style/jquery_002.js}"></script>
+<script src="/static/style/bootstrap.js" th:src="@{/style/bootstrap.js}"></script>
+<script src="/static/style/jquery.js" th:src="@{/style/jquery.js}"></script>
+<!--Beyond Scripts-->
+<script src="/static/style/beyond.js" th:src="@{/style/beyondthe.js}"></script>
+
+
+
+</body></html>

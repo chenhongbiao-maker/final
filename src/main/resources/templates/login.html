@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>人力资源管理系统</title>
+		<!-- Bootstrap core CSS -->
+		<link href="../static/asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.css}" rel="stylesheet">
+		<!-- Custom styles for this template -->
+		<link href="../static/asserts/css/signin.css" th:href="@{/asserts/css/signin.css}" rel="stylesheet">
+	</head>
+
+	<body class="text-center">
+		<form class="form-signin" onsubmit="return check1()" th:action="@{/user/login}" action="dashboard.html" method="post">
+			<img class="mb-4" th:src="@{/asserts/img/bootstrap-solid.svg}" src="../static/asserts/img/bootstrap-solid.svg" alt="" width="72" height="72">
+			<h1 class="h3 mb-3 font-weight-normal" th:text="#{login.tip}">Please sign in</h1>
+			<p style="color:red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
+			<label class="sr-only" th:text="#{login.username}">Username</label>
+			<input type="text" name="username" class="form-control" th:placeholder="#{login.username}" placeholder="Username" required="" autofocus="">
+			<label class="sr-only" th:text="#{login.password}">Password</label>
+			<input type="password" name="password" class="form-control" th:placeholder="#{login.password}" placeholder="Password" required="">
+			<div class="checkbox mb-3">
+
+          <input type="checkbox" id="checkbox1" name="role" value="管理员" onclick="check(this)"/> [[#{login.admin}]]
+					<input type="checkbox" id="checkbox2" name="role" value="员工" onclick="check(this)"/> [[#{login.emp}]]
+
+			</div>
+			<button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{login.btn}">Sign in</button>
+			<p class="mt-5 mb-3 text-muted" th:text="#{login.system}">My Human Resource Management System</p>
+			<a class="btn btn-sm" th:href="@{/index.html(l='zh_CN')}">中文</a>
+			<a class="btn btn-sm" th:href="@{/index.html(l='en_US')}">English</a>
+		</form>
+
+	</body>
+	<script type="text/javascript">
+		function check(obj){
+			if(obj.id == 'checkbox1' && obj.checked == true){
+				document.getElementById('checkbox2').checked = false;
+			}
+			else if(obj.id == 'checkbox2' && obj.checked == true){
+				document.getElementById('checkbox1').checked = false;
+			}
+		}
+
+		function check1() {
+			var num = document.getElementsByName("role");
+			var k = 0;
+			for (var i = 0; i < num.length; i++) {
+				if (num[i].checked == true) {
+					k = k + 1;
+				}
+			}
+
+			if (k == 0) {
+				alert("请选择角色");
+				return false;
+			}
+		}
+	</script>
+</html>

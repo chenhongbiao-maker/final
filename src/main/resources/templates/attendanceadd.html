@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+    <meta charset="utf-8">
+    <title>人力资源管理系统</title>
+
+    <meta name="description" content="Dashboard">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!--Basic Styles-->
+    <link href="/static/style/bootstrap.css" th:href="@{/style/bootstrap.css}" rel="stylesheet">
+    <link href="/static/style/font-awesome.css" th:href="@{/style/font-awesome.css}" rel="stylesheet">
+    <link href="/static/style/weather-icons.css" th:href="@{/style/weather-icons.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+    <!--Beyond styles-->
+    <link id="beyond-link" href="/static/style/beyond.css" th:href="@{/style/beyondt.css}" rel="stylesheet" type="text/css">
+    <link href="/static/style/demo.css" th:href="@{/style/demo.css}" rel="stylesheet">
+    <link href="/static/style/typicons.css" th:href="@{/style/typicons.css}" rel="stylesheet">
+    <link href="/static/style/animate.css" th:href="@{/style/animate.css}" rel="stylesheet">
+
+    <script type="text/javascript" th:inline="javascript">
+        var basePath = [[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]];
+    function chec() {
+        var leave_time=document.getElementById("leave_time");
+        var over_time=document.getElementById("over_time");
+        var off_time=document.getElementById("off_time");
+        var emp_name=document.getElementById("emp_name").value;
+        var emp_id=document.getElementById("emp_id").value;
+        var help1=document.getElementById("help1");
+        var help2=document.getElementById("help2");
+        var help3=document.getElementById("help3");
+        var help4=document.getElementById("help4");
+        var tag=true;
+        if(!/^[0-9,.]*$/.test(leave_time.value)){
+            help2.style.display='';
+            help1.style.display='none';
+            help3.style.display='none';
+            help4.style.display='none';
+            return false;
+        }else if(!/^[0-9,.]*$/.test(over_time.value)){
+            help3.style.display='';
+            help1.style.display='none';
+            help2.style.display='none';
+            help4.style.display='none';
+            return false;
+        }else if(!/^[0-9,.]*$/.test(off_time.value)){
+            help3.style.display='none';
+            help1.style.display='none';
+            help2.style.display='none';
+            help4.style.display='';
+            return false;
+        }
+
+        $.ajax({
+            url: basePath +  '/attendance/checkname',
+            type: "post",
+            async:false,
+            data: {"emp_name":emp_name,"emp_id":emp_id},
+            datatype: "json",
+            success:function(data){
+                if(data ==null || "" == data){
+                    tag=false;
+                }
+            },
+            error:function (data) {
+                alert("出错了！");
+            }
+        })
+        if(tag==false){
+            help1.style.display='';
+            help2.style.display='none';
+            help3.style.display='none';
+            help4.style.display='none';
+            return false;
+        }
+
+    }
+
+    function getid(){
+        var emp_name=document.getElementById("emp_name");
+        var emp_id=document.getElementById("emp_id");
+        var value=emp_name.value;
+        if(value!=null){
+            $.ajax({
+                url: basePath +  '/attendancegetid',
+                type: "post",
+                data: {"emp_name":value},
+                datatype: "json",
+                success:function(data){
+                    if(null != data && "" != data){
+                        emp_id.value=data.emp_id;
+                    }
+
+                }
+            })
+        }
+    }
+    </script>
+
+</head>
+<body>
+<!-- 头部 -->
+<div th:include="top :: copy"  ></div>
+
+<!-- /头部 -->
+
+<div class="main-container container-fluid">
+    <div class="page-container">
+        <!-- Page Sidebar -->
+        <div th:include="left :: cope"  ></div>
+        <!-- /Page Sidebar -->
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Page Breadcrumb -->
+            <div class="page-breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="#" th:href="@{/system/list}">系统</a>
+                    </li>
+                    <li>
+                        <a href="" th:href="@{/attdance/list}">考勤列表</a>
+                    </li>
+                    <li class="active">添加考勤记录</li>
+                </ul>
+            </div>
+            <!-- /Page Breadcrumb -->
+
+            <!-- Page Body -->
+            <div class="page-body">
+
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-xs-12">
+                        <div class="widget">
+                            <div class="widget-header bordered-bottom bordered-blue">
+                                <span class="widget-caption">新增考勤记录</span>
+                            </div>
+                            <div class="widget-body">
+                                <div id="horizontal-form">
+                                    <form class="form-horizontal"  onsubmit="return chec()" role="form" action="" th:action="@{/attendance/add}" method="post">
+                                        <div class="form-group">
+                                            <label for="emp_name" class="col-sm-2 control-label no-padding-right">员工名称</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" id="emp_name" placeholder="" name="emp_name" required="" onchange="getid()"   type="text">
+                                            </div>
+                                            <p class="help-block col-sm-4 red"></p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="emp_id" class="col-sm-2 control-label no-padding-right">员工ID</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" id="emp_id" placeholder="" name="emp_id" required=""  type="text">
+                                            </div>
+                                            <p class="help-block col-sm-4 red" id="help1" style="display: none">请正确填写员工名或ID</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="leave_time" class="col-sm-2 control-label no-padding-right">缺勤时长</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" id="leave_time" placeholder="" name="leave_time" required="" type="text">
+                                            </div>
+                                            <p class="help-block col-sm-4 red" id="help2" style="display: none">请填写正确格式</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="over_time" class="col-sm-2 control-label no-padding-right">加班时长</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" id="over_time" placeholder="" name="over_time" required="" type="text">
+                                            </div>
+                                            <p class="help-block col-sm-4 red" id="help3" style="display: none">请填写正确格式</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="off_time" class="col-sm-2 control-label no-padding-right">请假时长</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" id="off_time" placeholder="" name="off_time" required="" type="text">
+                                            </div>
+                                            <p class="help-block col-sm-4 red" id="help4" style="display: none">请填写正确格式</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="time" class="col-sm-2 control-label no-padding-right">考勤日期</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" id="time" placeholder="" name="time" required="" type="date">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <button type="submit"   class="btn btn-default"  >保存信息</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /Page Body -->
+        </div>
+        <!-- /Page Content -->
+    </div>
+</div>
+
+<!--Basic Scripts-->
+<script src="/static/style/jquery_002.js" th:src="@{/style/jquery_002.js}"></script>
+<script src="/static/style/bootstrap.js" th:src="@{/style/bootstrap.js}"></script>
+<script src="/static/style/jquery.js" th:src="@{/style/jquery.js}"></script>
+<!--Beyond Scripts-->
+<script src="/static/style/beyond.js" th:src="@{/style/beyondthe.js}"></script>
+
+
+
+</body></html>

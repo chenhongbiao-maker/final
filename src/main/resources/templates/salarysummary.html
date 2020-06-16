@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+    <meta charset="utf-8">
+    <title>人力资源管理系统</title>
+
+    <meta name="description" content="Dashboard">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!--Basic Styles-->
+    <link href="/static/style/bootstrap.css" th:href="@{/style/bootstrap.css}" rel="stylesheet">
+    <link href="/static/style/font-awesome.css" th:href="@{/style/font-awesome.css}" rel="stylesheet">
+    <link href="/static/style/weather-icons.css" th:href="@{/style/weather-icons.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+    <!--Beyond styles-->
+    <link id="beyond-link" href="/static/style/beyond.css" th:href="@{/style/beyondt.css}" rel="stylesheet" type="text/css">
+    <link href="/static/style/demo.css" th:href="@{/style/demo.css}" rel="stylesheet">
+    <link href="/static/style/typicons.css" th:href="@{/style/typicons.css}" rel="stylesheet">
+    <link href="/static/style/animate.css" th:href="@{/style/animate.css}" rel="stylesheet">
+
+    <script type="text/javascript">
+
+    </script>
+
+</head>
+<body>
+<!-- 头部 -->
+<div th:include="top :: copy"  ></div>
+<!-- /头部 -->
+
+<div class="main-container container-fluid">
+    <div class="page-container">
+        <!-- Page Sidebar -->
+        <div th:include="left :: cope"  ></div>
+        <!-- /Page Sidebar -->
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Page Body -->
+            <div class="page-body">
+                <form class="navbar-form navbar-left" onsubmit="return checkyear1()" th:action="@{/salary/summary}" method="post">
+                    <div class="form-group" >
+                        <label class="form-inline" />年度汇总：
+                        <input style="box-sizing: border-box;vertical-align: top" name="search1" th:id="search1" type="text" required="required" class="form-control" placeholder="输入年份搜索">
+                        <label class="form-inline" />员工姓名：
+                        <input style="box-sizing: border-box;vertical-align: top" name="search2" th:id="search2" type="text" class="form-control" placeholder="输入员工姓名搜索">
+                        <button type="submit" class="btn btn-primary">搜索</button>
+                    </div>
+
+                </form>
+                <h2><a style="float: right;margin-right: 10px;" class="btn btn-primary" href="#" id="btn" >导出Excel</a></h2>
+
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-xs-12">
+                        <div class="widget">
+                            <div class="widget-body">
+                                <div class="flip-scroll">
+
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+                                        <tr>
+                                            <td align="center" class="text-center" style="color: #00adee;font-size: 30px;" height="60">年度汇总表</td>
+                                        </tr>
+                                    </table>
+
+                                    <table class="table table-bordered table-hover" id="tab">
+                                        <thead class="">
+                                        <tr>
+                                            <th class="text-center" >年</th>
+                                            <th class="text-center">月</th>
+                                            <th class="text-center">员工ID</th>
+                                            <th class="text-center">员工名称</th>
+                                            <th class="text-center">基础工资</th>
+                                            <th class="text-center">考勤扣款</th>
+                                            <th class="text-center">加班奖金</th>
+                                            <th class="text-center">实际工资</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <div th:remove="tag" th:each="summarys,stats:${summary.getSummaryMap()}"
+                                             th:with="month = ${summarys.key}, monthChangeNum = ${summarys.value.size()},
+                                        month0 = ${summarys.value.get(0)}, monthList = ${summarys.value}">
+                                            <tr th:if="${summary.getNum()}>0">
+                                                <td class="text-center" style="vertical-align: middle" th:text="${year}" th:rowspan="${summary.getNum()}" th:if="${stats.first}"></td>
+                                                <td th:text="${month}" style="vertical-align: middle" th:rowspan="${monthChangeNum}"
+                                                    th:class="text-center"></td>
+                                                <td th:class="text-center" th:text="${month0.getEmp_id()}"></td>
+                                                <td th:class="text-center" th:text="${month0.getEmp_name()}"></td>
+                                                <td th:class="text-center" th:text="${month0.getSalary()+'元'}"></td>
+                                                <td th:class="text-center" th:text="${month0.getLeave_salary()+'元'}"></td>
+                                                <td th:class="text-center" th:text="${month0.getOvertime_salary()+'元'}"></td>
+                                                <td th:class="text-center" th:text="${month0.getResalary()+'元'}"></td>
+                                            </tr>
+                                            <tr th:each="months,stat : ${monthList}" th:if="${!stat.first}">
+                                                <td th:class="text-center" th:text="${months.getEmp_id()}"></td>
+                                                <td th:class="text-center" th:text="${months.getEmp_name()}"></td>
+                                                <td th:class="text-center" th:text="${months.getSalary()+'元'}"></td>
+                                                <td th:class="text-center" th:text="${months.getLeave_salary()+'元'}"></td>
+                                                <td th:class="text-center" th:text="${months.getOvertime_salary()+'元'}"></td>
+                                                <td th:class="text-center" th:text="${months.getResalary()+'元'}"></td>
+                                            </tr>
+                                            <!--
+                                            <tr th:each="emps : ${emp.list} ">
+                                                <td align="center" th:text="${emps.emp_id}"></td>
+                                                <td align="center" th:text="${emps.emp_name}"></td>
+                                                <td align="center" th:text="${emps.department_name}"></td>
+                                                <td align="center" th:text="${emps.job_name}"></td>
+                                            </tr>
+                                            -->
+                                        </div>
+                                        </tbody>
+                                    </table>
+                                    <div class=""form-group  id="main" style="height:500px;width:1500px;"></div>
+                                    <div class=""form-group  id="main1" style="height:500px;width:1500px;"></div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <!-- /Page Body -->
+        </div>
+        <!-- /Page Content -->
+    </div>
+</div>
+
+<!--Basic Scripts-->
+<script src="/static/style/jquery_002.js" th:src="@{/style/jquery_002.js}"></script>
+<script src="/static/style/bootstrap.js" th:src="@{/style/bootstrap.js}"></script>
+<script src="/static/style/jquery.js" th:src="@{/style/jquery.js}"></script>
+<!--Beyond Scripts-->
+<script src="/static/style/beyond.js" th:src="@{/style/beyondthe.js}"></script>
+<script src="" th:src="@{/style/jquery.table2excel.js}"></script>
+<script th:src="@{/style/echarts.min.js}"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btn").click(function(){
+            $("#tab").table2excel({
+                // 不被导出的表格行的CSS class类
+                exclude: ".noExl",
+                // 导出的Excel文档的名称，（没看到作用）
+                name: "Excel Document Name",
+                // Excel文件的名称
+                filename: "工资汇总"
+            });
+        });
+    });
+
+</script>
+<script  th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]];
+    var year=[[${year}]];
+    $.ajax({
+        url :basePath + '/salary/summarysalary', //
+        type : "post",
+        async : false, //同步执行
+        data : {"year":year}, //
+        dataType : 'json', //返回数据形式为json
+        success : function(result) {
+            if (result) {
+                //把result(即Json数据)以参数形式放入Echarts代码中
+                bind(result);
+
+            }
+        },
+        error : function(errorMsg) {
+            alert("加载数据失败");
+        }
+    }); //ajax
+
+    $.ajax({
+        url : basePath +'/salary/summaryresalary', //
+        type : "post",
+        async : false, //同步执行
+        data : {"year":year}, //
+        dataType : 'json', //返回数据形式为json
+        success : function(result) {
+            if (result) {
+                //把result(即Json数据)以参数形式放入Echarts代码中
+                bind1(result);
+
+            }
+        },
+        error : function(errorMsg) {
+            alert("加载数据失败");
+        }
+    }); //ajax
+
+    function bind(result){
+
+        // 基于准备好的dom，初始化echarts图表
+        var TypeSalesChart = echarts.init(document.getElementById('main'));
+        var columnValue = [];
+        var color=['#fa5a5a','#f0d264', '#82c8a0', '#7fccde', '#6698cb','#cb99c5', '#ca8622'];
+        var arr = [];
+        var month=[];
+        for(var i=0;i<result['doublelist'].length;i++){
+            arr.push(result['doublelist'][i]);
+        }
+
+        for(var i=0;i<result['month'].length;i++){
+            month.push(result['month'][i]+'月');
+        }
+
+        for (var i = 0; i < result['name'].length; i++) {
+
+            var columnDataValue = null;
+            // 为每个柱子赋值
+
+            columnDataValue = {
+
+                name:[result['name'][i]],
+                type:'bar',
+                itemStyle: {
+                    normal: {
+                        color:[color[i]],
+                        label: {
+                            show: true, //开启显示
+                            position: 'top', //在上方显示
+                            textStyle: { //数值样式
+                                color: 'black',
+                                fontSize: 16
+                            }
+                        }
+                    }
+                },
+
+                data:arr[i]
+            };
+            columnValue.push(columnDataValue);
+
+        }
+
+
+
+
+        var option = {
+            title: {
+                text:'基础工资',
+                x:'center',
+                y:'top',
+                textAlign:'center'
+            },
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} "
+            },
+            legend: {
+                orient : 'vertical',
+                x : 'left',
+                data: result['name']
+            },
+
+            toolbox:{
+                show : true,                                 //是否显示工具栏组件
+                orient:"horizontal",                        //工具栏 icon 的布局朝向'horizontal' 'vertical'
+                itemSize:15,                                 //工具栏 icon 的大小
+                itemGap:10,                                  //工具栏 icon 每项之间的间隔
+                showTitle:true,                             //是否在鼠标 hover 的时候显示每个工具 icon 的标题
+                feature : {
+                    mark : {                                 // '辅助线开关'
+                        show: true
+                    },
+                    dataView : {                            //数据视图工具，可以展现当前图表所用的数据，编辑后可以动态更新
+                        show: true,                         //是否显示该工具。
+                        title:"数据视图",
+                        readOnly: false,                    //是否不可编辑（只读）
+                        lang: ['数据视图', '关闭', '刷新'],  //数据视图上有三个话术，默认是['数据视图', '关闭', '刷新']
+                        backgroundColor:"#fff",             //数据视图浮层背景色。
+                        textareaColor:"#fff",               //数据视图浮层文本输入区背景色
+                        textareaBorderColor:"#333",         //数据视图浮层文本输入区边框颜色
+                        textColor:"#000",                    //文本颜色。
+                        buttonColor:"#c23531",              //按钮颜色。
+                        buttonTextColor:"#fff",             //按钮文本颜色。
+                    },
+                    magicType: {                            //动态类型切换
+                        show: true,
+                        title:"切换",                       //各个类型的标题文本，可以分别配置。
+                        type: ['line', 'bar'],              //启用的动态类型，包括'line'（切换为折线图）, 'bar'（切换为柱状图）, 'stack'（切换为堆叠模式）, 'tiled'（切换为平铺模式）
+                    },
+                    restore : {                             //配置项还原。
+                        show: true,                         //是否显示该工具。
+                        title:"还原",
+                    },
+                    saveAsImage : {                         //保存为图片。
+                        show: true,                         //是否显示该工具。
+                        type:"png",                         //保存的图片格式。支持 'png' 和 'jpeg'。
+                        name:"pic1",                        //保存的文件名称，默认使用 title.text 作为名称
+                        backgroundColor:"#ffffff",        //保存的图片背景色，默认使用 backgroundColor，如果backgroundColor不存在的话会取白色
+                        title:"保存为图片",
+                        pixelRatio:1                        //保存图片的分辨率比例，默认跟容器相同大小，如果需要保存更高分辨率的，可以设置为大于 1 的值，例如 2
+                    },
+                    dataZoom :{                             //数据区域缩放。目前只支持直角坐标系的缩放
+                        show: true,                         //是否显示该工具。
+                        title:"缩放",                       //缩放和还原的标题文本
+                        xAxisIndex:0,                       //指定哪些 xAxis 被控制。如果缺省则控制所有的x轴。如果设置为 false 则不控制任何x轴。如果设置成 3 则控制 axisIndex 为 3 的x轴。如果设置为 [0, 3] 则控制 axisIndex 为 0 和 3 的x轴
+                        yAxisIndex:false,                   //指定哪些 yAxis 被控制。如果缺省则控制所有的y轴。如果设置为 false 则不控制任何y轴。如果设置成 3 则控制 axisIndex 为 3 的y轴。如果设置为 [0, 3] 则控制 axisIndex 为 0 和 3 的y轴
+                    },
+                },
+                zlevel:0,                                   //所属图形的Canvas分层，zlevel 大的 Canvas 会放在 zlevel 小的 Canvas 的上面
+                z:2,                                         //所属组件的z分层，z值小的图形会被z值大的图形覆盖
+                left:"right",                              //组件离容器左侧的距离,'left', 'center', 'right','20%'
+                top:"0",                                   //组件离容器上侧的距离,'top', 'middle', 'bottom','20%'
+                right:"0",                               //组件离容器右侧的距离,'20%'
+                bottom:"auto",                              //组件离容器下侧的距离,'20%'
+                width:"auto",                               //图例宽度
+                height:"auto",                              //图例高度
+            },
+            xAxis: {
+                data : month
+
+            },
+
+            yAxis: {},
+
+            series : columnValue
+
+        };
+        // 为echarts对象加载数据
+        TypeSalesChart.setOption(option);
+    }
+
+    function bind1(result){
+
+        // 基于准备好的dom，初始化echarts图表
+        var TypeSalesChart = echarts.init(document.getElementById('main1'));
+        var columnValue = [];
+        var color=['#fa5a5a','#f0d264', '#82c8a0', '#7fccde', '#6698cb','#cb99c5', '#ca8622'];
+        var arr = [];
+        var month=[];
+        for(var i=0;i<result['doublelist'].length;i++){
+            arr.push(result['doublelist'][i]);
+        }
+
+        for(var i=0;i<result['month'].length;i++){
+            month.push(result['month'][i]+'月');
+        }
+
+        for (var i = 0; i < result['name'].length; i++) {
+
+            var columnDataValue = null;
+            // 为每个柱子赋值
+
+            columnDataValue = {
+
+                name:[result['name'][i]],
+                type:'bar',
+                itemStyle: {
+                    normal: {
+                        color:[color[i]],
+                        label: {
+                            show: true, //开启显示
+                            position: 'top', //在上方显示
+                            textStyle: { //数值样式
+                                color: 'black',
+                                fontSize: 16
+                            }
+                        }
+                    }
+                },
+
+                data:arr[i]
+            };
+            columnValue.push(columnDataValue);
+
+        }
+
+
+
+
+        var option = {
+            title: {
+                text:'实际工资',
+                x:'center',
+                y:'top',
+                textAlign:'center'
+            },
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} "
+            },
+            legend: {
+                orient : 'vertical',
+                x : 'left',
+                data: result['name']
+            },
+
+            toolbox:{
+                show : true,                                 //是否显示工具栏组件
+                orient:"horizontal",                        //工具栏 icon 的布局朝向'horizontal' 'vertical'
+                itemSize:15,                                 //工具栏 icon 的大小
+                itemGap:10,                                  //工具栏 icon 每项之间的间隔
+                showTitle:true,                             //是否在鼠标 hover 的时候显示每个工具 icon 的标题
+                feature : {
+                    mark : {                                 // '辅助线开关'
+                        show: true
+                    },
+                    dataView : {                            //数据视图工具，可以展现当前图表所用的数据，编辑后可以动态更新
+                        show: true,                         //是否显示该工具。
+                        title:"数据视图",
+                        readOnly: false,                    //是否不可编辑（只读）
+                        lang: ['数据视图', '关闭', '刷新'],  //数据视图上有三个话术，默认是['数据视图', '关闭', '刷新']
+                        backgroundColor:"#fff",             //数据视图浮层背景色。
+                        textareaColor:"#fff",               //数据视图浮层文本输入区背景色
+                        textareaBorderColor:"#333",         //数据视图浮层文本输入区边框颜色
+                        textColor:"#000",                    //文本颜色。
+                        buttonColor:"#c23531",              //按钮颜色。
+                        buttonTextColor:"#fff",             //按钮文本颜色。
+                    },
+                    magicType: {                            //动态类型切换
+                        show: true,
+                        title:"切换",                       //各个类型的标题文本，可以分别配置。
+                        type: ['line', 'bar'],              //启用的动态类型，包括'line'（切换为折线图）, 'bar'（切换为柱状图）, 'stack'（切换为堆叠模式）, 'tiled'（切换为平铺模式）
+                    },
+                    restore : {                             //配置项还原。
+                        show: true,                         //是否显示该工具。
+                        title:"还原",
+                    },
+                    saveAsImage : {                         //保存为图片。
+                        show: true,                         //是否显示该工具。
+                        type:"png",                         //保存的图片格式。支持 'png' 和 'jpeg'。
+                        name:"pic1",                        //保存的文件名称，默认使用 title.text 作为名称
+                        backgroundColor:"#ffffff",        //保存的图片背景色，默认使用 backgroundColor，如果backgroundColor不存在的话会取白色
+                        title:"保存为图片",
+                        pixelRatio:1                        //保存图片的分辨率比例，默认跟容器相同大小，如果需要保存更高分辨率的，可以设置为大于 1 的值，例如 2
+                    },
+                    dataZoom :{                             //数据区域缩放。目前只支持直角坐标系的缩放
+                        show: true,                         //是否显示该工具。
+                        title:"缩放",                       //缩放和还原的标题文本
+                        xAxisIndex:0,                       //指定哪些 xAxis 被控制。如果缺省则控制所有的x轴。如果设置为 false 则不控制任何x轴。如果设置成 3 则控制 axisIndex 为 3 的x轴。如果设置为 [0, 3] 则控制 axisIndex 为 0 和 3 的x轴
+                        yAxisIndex:false,                   //指定哪些 yAxis 被控制。如果缺省则控制所有的y轴。如果设置为 false 则不控制任何y轴。如果设置成 3 则控制 axisIndex 为 3 的y轴。如果设置为 [0, 3] 则控制 axisIndex 为 0 和 3 的y轴
+                    },
+                },
+                zlevel:0,                                   //所属图形的Canvas分层，zlevel 大的 Canvas 会放在 zlevel 小的 Canvas 的上面
+                z:2,                                         //所属组件的z分层，z值小的图形会被z值大的图形覆盖
+                left:"right",                              //组件离容器左侧的距离,'left', 'center', 'right','20%'
+                top:"0",                                   //组件离容器上侧的距离,'top', 'middle', 'bottom','20%'
+                right:"0",                               //组件离容器右侧的距离,'20%'
+                bottom:"auto",                              //组件离容器下侧的距离,'20%'
+                width:"auto",                               //图例宽度
+                height:"auto",                              //图例高度
+            },
+            xAxis: {
+                data : month
+
+            },
+
+            yAxis: {},
+
+            series : columnValue
+
+        };
+        // 为echarts对象加载数据
+        TypeSalesChart.setOption(option);
+    }
+</script>
+
+
+</body></html>

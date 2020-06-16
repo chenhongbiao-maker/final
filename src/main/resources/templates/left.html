@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<body>
+<div th:fragment="cope">
+<div class="page-sidebar" id="sidebar" >
+                <!-- Page Sidebar Header-->
+              <!--  <div class="sidebar-header-wrapper">
+                    <input class="searchinput" type="text">
+                    <i class="searchicon fa fa-search"></i>
+                    <div class="searchhelper">Search Reports, Charts, Emails or Notifications</div>
+                </div>-->
+                <!-- /Page Sidebar Header -->
+                <!-- Sidebar Menu -->
+                <ul class="nav sidebar-menu">
+                    <!--Dashboard-->
+
+                    <li>
+                        <a href="#" class="menu-dropdown">
+                            <i class="menu-icon fa fa-user"></i>
+                            <span class="menu-text">用户管理 </span>
+                            <i class="menu-expand"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li>
+                                <a href="" th:href="@{/admin/list}">
+                                    <span class="menu-text">
+                                        用户列表                                    </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="#" class="menu-dropdown">
+                            <i class="menu-icon fa fa-user"></i>
+                            <span class="menu-text">员工管理</span>
+                            <i class="menu-expand"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li>
+                                <a href="" th:href="@{/emp/list}">
+                                    <span class="menu-text">
+                                        员工列表                                    </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="" th:href="@{/changejob/list}">
+                                    <span class="menu-text">
+                                        员工调职                                    </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="" th:href="@{/emp/summary1}">
+                                    <span class="menu-text">
+                                        员工汇总                                    </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="#" class="menu-dropdown">
+                            <i class="menu-icon fa fa-list"></i>
+                            <span class="menu-text">部门管理</span>
+                            <i class="menu-expand"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li>
+                                <a href="" th:href="@{/depart/list}">
+                                    <span class="menu-text">
+                                        部门列表                                   </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="#" class="menu-dropdown">
+                            <i class="menu-icon fa fa-file-text"></i>
+                            <span class="menu-text">文档</span>
+                            <i class="menu-expand"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li>
+                                <a href="" th:href="@{/changejobtable/list}">
+                                    <span class="menu-text">
+                                        调职记录                                    </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="" th:href="@{/emp/quitlist}">
+                                    <span class="menu-text">
+                                        离职记录                                    </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="#" class="menu-dropdown">
+                            <i class="menu-icon fa fa-link"></i>
+                            <span class="menu-text">
+                                工资管理
+                            </span>
+                            <i class="menu-expand"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li>
+                                <a href="" th:href="@{/salary/list}">
+                                    <span class="menu-text">
+                                        工资列表                                   </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="" th:href="@{/salary/addmanybefore}">
+                                    <span class="menu-text">
+                                        批量增加工资                                 </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="" th:href="@{/salary/summarybefore}">
+                                    <span class="menu-text">
+                                        工资汇总                                 </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="#" class="menu-dropdown">
+                            <i class="menu-icon fa fa-gear"></i>
+                            <span class="menu-text">考勤管理</span>
+                            <i class="menu-expand"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li>
+                                <a href="" th:href="@{/attdance/list}">
+                                    <span class="menu-text">
+                                        考勤列表                                 </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="" th:href="@{/attdance/addmanybefore}">
+                                    <span class="menu-text">
+                                        批量增加考勤                                </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="" th:href="@{/attendance/summarybefore}">
+                                    <span class="menu-text">
+                                        考勤汇总                                 </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="#" class="menu-dropdown">
+                            <i class=" menu-icon fa fa-vcard-o"></i>
+                            <span class="menu-text">公司政策</span>
+                            <i class="menu-expand"></i>
+                        </a>
+                        <ul class="submenu">
+                            <li>
+                                <a href="" th:href="@{/policy/list}">
+                                    <span class="menu-text">
+                                        政策列表                                   </span>
+                                    <i class="menu-expand"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+
+                </ul>
+                <!-- /Sidebar Menu -->
+            </div>
+
+</div>
+</body>
+</html>

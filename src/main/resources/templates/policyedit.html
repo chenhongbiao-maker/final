@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+    <meta charset="utf-8">
+    <title>人力资源管理系统</title>
+
+    <meta name="description" content="Dashboard">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!--Basic Styles-->
+    <link href="/static/style/bootstrap.css" th:href="@{/style/bootstrap.css}" rel="stylesheet">
+    <link href="/static/style/font-awesome.css" th:href="@{/style/font-awesome.css}" rel="stylesheet">
+    <link href="/static/style/weather-icons.css" th:href="@{/style/weather-icons.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+    <!--Beyond styles-->
+    <link id="beyond-link" href="/static/style/beyond.css" th:href="@{/style/beyondt.css}" rel="stylesheet" type="text/css">
+    <link href="/static/style/demo.css" th:href="@{/style/demo.css}" rel="stylesheet">
+    <link href="/static/style/typicons.css" th:href="@{/style/typicons.css}" rel="stylesheet">
+    <link href="/static/style/animate.css" th:href="@{/style/animate.css}" rel="stylesheet">
+
+    <script type="text/javascript">
+        function checkpo() {
+            var leave_money=document.getElementById("leave_money");
+            var over_money=document.getElementById("over_money");
+            var off_money=document.getElementById("off_money");
+            var leave_money1=document.getElementById("leave_money1");
+            var over_money1=document.getElementById("over_money1");
+            var off_money1=document.getElementById("off_money1");
+
+            if(!/^[0-9,.]*$/.test(leave_money.value)){
+                leave_money1.style.display='';
+                over_money1.style.display='none';
+                off_money1.style.display='none';
+                return false;
+            }else if(!/^[0-9,.]*$/.test(over_money.value)){
+                leave_money1.style.display='none';
+                over_money1.style.display='';
+                off_money1.style.display='none';
+                return false;
+            }else if(!/^[0-9,.]*$/.test(off_money.value)){
+                leave_money1.style.display='none';
+                over_money1.style.display='none';
+                off_money1.style.display='';
+                return false;
+
+            }
+
+        }
+
+    </script>
+
+</head>
+<body>
+<!-- 头部 -->
+<div th:include="top :: copy"  ></div>
+
+<!-- /头部 -->
+
+<div class="main-container container-fluid">
+    <div class="page-container">
+        <!-- Page Sidebar -->
+        <div th:include="left :: cope"  ></div>
+        <!-- /Page Sidebar -->
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Page Breadcrumb -->
+            <div class="page-breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="#" th:href="@{/system/list}">系统</a>
+                    </li>
+                    <li>
+                        <a href="" th:href="@{/policy/list}">政策列表</a>
+                    </li>
+                    <li class="active">修改政策</li>
+                </ul>
+            </div>
+            <!-- /Page Breadcrumb -->
+
+            <!-- Page Body -->
+            <div class="page-body">
+
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-xs-12">
+                        <div class="widget">
+                            <div class="widget-header bordered-bottom bordered-blue">
+                                <span class="widget-caption">修改政策</span>
+                            </div>
+                            <div class="widget-body">
+                                <div id="horizontal-form">
+                                    <form class="form-horizontal" onsubmit="return checkpo()" role="form" action="" th:action="@{/policy/edit(policy_id=${policy_id})}" method="post">
+                                        <div class="form-group">
+                                            <label for="leave_money" class="col-sm-2 control-label no-padding-right">考勤扣款</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" th:value="${policy.getLeave_money()}" id="leave_money" placeholder="" name="leave_money" required=""   type="text">
+                                            </div>
+                                            <p style="display: none" id="leave_money1" class="help-block col-sm-4 red">请填入正确格式</p>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="over_money" class="col-sm-2 control-label no-padding-right">加班奖金</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" th:value="${policy.getOver_money()}" id="over_money" placeholder="" name="over_money" required=""  type="text">
+                                            </div>
+                                            <p style="display: none" id="over_money1" class="help-block col-sm-4 red">请填入正确格式</p>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="off_money" class="col-sm-2 control-label no-padding-right">请假扣款</label>
+                                            <div class="col-sm-6">
+                                                <input class="form-control" th:value="${policy.getOff_money()}" id="off_money" placeholder="" name="off_money" required=""  type="text">
+                                            </div>
+                                            <p style="display: none" id="off_money1" class="help-block col-sm-4 red">请填入正确格式</p>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <button type="submit"  class="btn btn-default">修改信息</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /Page Body -->
+        </div>
+        <!-- /Page Content -->
+    </div>
+</div>
+
+<!--Basic Scripts-->
+<script src="/static/style/jquery_002.js" th:src="@{/style/jquery_002.js}"></script>
+<script src="/static/style/bootstrap.js" th:src="@{/style/bootstrap.js}"></script>
+<script src="/static/style/jquery.js" th:src="@{/style/jquery.js}"></script>
+<!--Beyond Scripts-->
+<script src="/static/style/beyond.js" th:src="@{/style/beyondthe.js}"></script>
+
+
+
+</body></html>

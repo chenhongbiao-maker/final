@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+    <meta charset="utf-8">
+    <title>人力资源管理系统</title>
+
+    <meta name="description" content="Dashboard">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!--Basic Styles-->
+    <link href="/static/style/bootstrap.css" th:href="@{/style/bootstrap.css}" rel="stylesheet">
+    <link href="/static/style/font-awesome.css" th:href="@{/style/font-awesome.css}" rel="stylesheet">
+    <link href="/static/style/weather-icons.css" th:href="@{/style/weather-icons.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+    <!--Beyond styles-->
+    <link id="beyond-link" href="/static/style/beyond.css" th:href="@{/style/beyondt.css}" rel="stylesheet" type="text/css">
+    <link href="/static/style/demo.css" th:href="@{/style/demo.css}" rel="stylesheet">
+    <link href="/static/style/typicons.css" th:href="@{/style/typicons.css}" rel="stylesheet">
+    <link href="/static/style/animate.css" th:href="@{/style/animate.css}" rel="stylesheet">
+
+    <script type="text/javascript" th:inline="javascript">
+        var basePath = [[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]];
+        var num = 1;
+
+        function checkn() {
+            var emp_name=document.getElementsByName("cnashu2");
+            var emp_id=document.getElementsByName("cnashu3");
+            var leave_time=document.getElementsByName("cnashu4");
+            var over_time=document.getElementsByName("cnashu5");
+            var off_time=document.getElementsByName("cnashu6");
+            var k=1;
+            var tag=true;
+            for(var i=0;i<emp_name.length;i++){
+
+                if(!/^[0-9,.]*$/.test(leave_time[i].value)){
+                    alert("第"+k+"行缺勤时长格式错误");
+                    return false;
+                }else if(!/^[0-9,.]*$/.test(over_time[i].value)){
+                    alert("第"+k+"行加班时长格式错误");
+                    return false;
+                }else if(!/^[0-9,.]*$/.test(off_time[i].value)){
+                    alert("第"+k+"行请假时长格式错误");
+                    return false;
+                }
+
+                $.ajax({
+                    url: basePath + '/attendance/checkname',
+                    type: "post",
+                    async:false,
+                    data: {"emp_name":emp_name[i].value,"emp_id":emp_id[i].value},
+                    datatype: "json",
+                    success:function(data){
+                        if(data ==null || "" == data){
+                            tag=false;
+                        }
+                    },
+                    error:function (data) {
+                        alert("出错了！");
+                    }
+                })
+
+                if(tag==false){
+                    alert("第"+k+"行员工名或id错误");
+                    return false;
+                }
+                k++;
+            }
+
+
+
+        }
+
+        function checkattendance(Num) {
+            var emp_name=document.getElementById("cnashu2"+Num);
+            var emp_id=document.getElementById("cnashu3"+Num);
+            var value=emp_name.value;
+
+            if(value!=null){
+                $.ajax({
+                    url: basePath +'/attendancegetid',
+                    type: "post",
+                    data: {"emp_name":value},
+                    datatype: "json",
+                    success:function(data){
+                        if(null != data && "" != data){
+                            emp_id.value=data.emp_id;
+                        }
+
+                    }
+                })
+            }
+
+        }
+
+
+        function removeTr(trNum){
+            $("#tr"+trNum).remove();
+        }
+
+        function addTable() {
+            var tableHtml ="";
+            tableHtml += '<tr id="tr'+num+'">'
+                +'<td align="center" name="cnashu1" id="cnashu1">'
+                +'<a href="#" id="delete" class="btn btn-danger btn-sm shiny" onclick="removeTr('+num+');">'
+                +'<i class="fa fa-minus" aria-hidden="true"></i>删除 </a>'
+                +'</td>'
+                +'<td align="center"><input class="form-control" onchange="checkattendance('+num+')" required="" id="cnashu2'+num+'"   name="cnashu2" /></td>'
+                +'<td align="center"><input class="form-control" required="" id="cnashu3'+num+'"   name="cnashu3"/></td>'
+                +'<td align="center"><input class="form-control" required="" id="cnashu4'+num+'"   name="cnashu4"/></td>'
+                +'<td align="center"><input class="form-control" required="" id="cnashu5'+num+'"   name="cnashu5"/></td>'
+                +'<td align="center"><input class="form-control" required="" id="cnashu6'+num+'"   name="cnashu6"/></td>'
+                +'<td align="center"><input class="form-control" required="" type="date" id="cnashu7'+num+'"   name="cnashu7"/></td>'
+                +'</tr>';
+
+
+            $("#myTable").append(tableHtml);
+            //var elements = $("#myTable").children().length;  //表示id为“mtTable”的标签下的子标签的个数
+
+            // $("#myTable").children().eq(elements - 1).after(tableHtml); //在表头之后添加空白行
+            num++;
+        }
+
+
+
+    </script>
+
+</head>
+<body>
+<!-- 头部 -->
+<div th:include="emp/top1 :: copy1"  ></div>
+<!-- /头部 -->
+
+<div class="main-container container-fluid">
+    <div class="page-container">
+        <!-- Page Sidebar -->
+        <div th:include="emp/left1 :: cope1"  ></div>
+        <!-- /Page Sidebar -->
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Page Breadcrumb -->
+            <div class="page-breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="#" th:href="@{/system/list1}">系统</a>
+                    </li>
+                    <li class="active">批量增加考勤</li>
+                </ul>
+            </div>
+            <!-- /Page Breadcrumb -->
+
+            <!-- Page Body -->
+            <div class="page-body">
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-xs-12">
+                        <div class="widget">
+                            <div class="widget-body">
+                                <div class="flip-scroll">
+                                    <form id="submitForm" th:action="@{/attendance/addmany1}" method="post" onsubmit="return checkn()">
+                                        <table id="myTable" class="table table-bordered table-hover">
+                                            <thead class="">
+                                            <tr>
+                                                <th class="text-center" width="4%">操作</th>
+                                                <th class="text-center">员工名称</th>
+                                                <th class="text-center">员工ID</th>
+                                                <th class="text-center">缺勤时长</th>
+                                                <th class="text-center">加班时长</th>
+                                                <th class="text-center">请假时长</th>
+                                                <th class="text-center">考勤日期</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+
+                                            <tr id="tr0">
+                                                <td align="center" name="cnashu1" id="cnashu10">
+                                                    <a href="#" id="delete" class="btn btn-danger btn-sm shiny" onclick="removeTr(0);">
+                                                        <i class="fa fa-minus" aria-hidden="true"></i>删除
+                                                    </a>
+                                                </td>
+                                                <td align="center" ><input class="form-control" required="" onchange="checkattendance(0)" name="cnashu2" id="cnashu20"></td>
+                                                <td align="center" ><input class="form-control" required="" name="cnashu3" id="cnashu30"></td>
+                                                <td align="center" ><input class="form-control" required="" name="cnashu4" id="cnashu40"></td>
+                                                <td align="center" ><input class="form-control" required="" name="cnashu5" id="cnashu50"></td>
+                                                <td align="center" ><input class="form-control" required="" name="cnashu6" id="cnashu60"></td>
+                                                <td align="center" ><input class="form-control" required="" type="date" name="cnashu7" id="cnashu70"></td>
+                                            </tr>
+
+                                            </tbody>
+                                        </table>
+                                        <a href="#"   id="add" class="btn btn-primary btn-sm shiny" onclick="addTable();" >
+                                            <i class="fa fa-plus" aria-hidden="true"></i> 添加
+                                        </a>
+
+                                        <h2><input type="submit" class="btn btn-primary" value="考勤添加"></h2>
+
+
+                                    </form>
+
+
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /Page Body -->
+        </div>
+        <!-- /Page Content -->
+    </div>
+</div>
+
+<!--Basic Scripts-->
+<script src="/static/style/jquery_002.js" th:src="@{/style/jquery_002.js}"></script>
+<script src="/static/style/bootstrap.js" th:src="@{/style/bootstrap.js}"></script>
+<script src="/static/style/jquery.js" th:src="@{/style/jquery.js}"></script>
+<!--Beyond Scripts-->
+<script src="/static/style/beyond.js" th:src="@{/style/beyondthe.js}"></script>
+
+
+
+</body></html>

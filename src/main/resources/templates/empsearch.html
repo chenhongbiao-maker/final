@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+    <meta charset="utf-8">
+    <title>人力资源管理系统</title>
+
+    <meta name="description" content="Dashboard">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!--Basic Styles-->
+    <link href="/static/style/bootstrap.css" th:href="@{/style/bootstrap.css}" rel="stylesheet">
+    <link href="/static/style/font-awesome.css" th:href="@{/style/font-awesome.css}" rel="stylesheet">
+    <link href="/static/style/weather-icons.css" th:href="@{/style/weather-icons.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+    <!--Beyond styles-->
+    <link id="beyond-link" href="/static/style/beyond.css" th:href="@{/style/beyondt.css}" rel="stylesheet" type="text/css">
+    <link href="/static/style/demo.css" th:href="@{/style/demo.css}" rel="stylesheet">
+    <link href="/static/style/typicons.css" th:href="@{/style/typicons.css}" rel="stylesheet">
+    <link href="/static/style/animate.css" th:href="@{/style/animate.css}" rel="stylesheet">
+    <script type="text/javascript" th:inline="javascript">
+        var basePath = [[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]];
+        function de(){
+            var tab=document.getElementById("tab");
+            var trs = tab.rows;
+
+            for(var i = 0, len = trs.length; i < len; i++){
+                var cell = trs[i].cells[0];
+                if(cell.style.display == 'none'){
+                    cell.style.display = '';
+                }else{
+                    cell.style.display = 'none';
+                }
+            }
+        }
+
+        function se() {
+            var box = document.getElementById("checkId1");
+            var box1= document.getElementsByName("checkId");
+            for (var i = 0; i < box1.length; i++) {
+                box1[i].checked = box.checked;
+            }
+        }
+
+        function del(){
+            var num=document.getElementsByName("checkId");
+            var k=0;
+            for (var i=0;i<num.length;i++){
+                if(num[i].checked==true){
+                    k=k+1;
+                }
+            }
+
+            if(k==0){
+                alert("至少选择一项");
+                return;
+            }
+
+            if(confirm("确定要删除吗？")){
+                var checkList = [];
+                for(j in num){
+                    if(num[j].checked){
+                        checkList.push(num[j].value);
+                    }
+                }
+            }
+
+            $.ajax({
+                url: basePath + '/deleteAll',
+                type:"post",
+                data:{
+                    checkList:checkList.toString()
+                },
+                datatype:"json",
+                success:function (data) {
+                    location.reload();
+                    alert("删除成功！")
+                },
+                error:function (msg) {
+                    alert("删除失败！")
+                }
+            })
+
+
+
+        }
+    </script>
+
+    <script type="text/javascript">
+
+
+    </script>
+
+</head>
+<body>
+<!-- 头部 -->
+<div th:include="top :: copy"  ></div>
+<!-- /头部 -->
+
+<div class="main-container container-fluid">
+    <div class="page-container">
+        <!-- Page Sidebar -->
+        <div th:include="left :: cope"  ></div>
+        <!-- /Page Sidebar -->
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Page Breadcrumb -->
+            <div class="page-breadcrumbs">
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="#" th:href="@{/system/list}">系统</a>
+                    </li>
+                    <li class="active">员工列表</li>
+                </ul>
+            </div>
+            <!-- /Page Breadcrumb -->
+
+            <!-- Page Body -->
+            <div class="page-body">
+
+                <h2><span style="display: inline-block;vertical-align: top;"><a th:href="@{/emp/addbefore}" class="btn btn-primary">员工添加</a></span>
+                    <span style="display: inline-block;vertical-align: top;">
+                    <form class="navbar-form navbar-left"  th:action="@{/emp/import}" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <input style="box-sizing: border-box;vertical-align: top; " class="form-control" type="file" id="file" name="file" />
+                            <button type="submit" class="btn btn-primary">导入Excel</button>
+                        </div>
+                    </form>
+                </span>
+                </h2>
+
+                <form class="navbar-form navbar-left" th:action="@{/emp/search(type=1)}" method="post">
+                    <div class="form-group">
+                        <label class="form-inline" />员工搜索：
+                        <input style="box-sizing: border-box;vertical-align: top" name="search" th:id="search" type="text" class="form-control" placeholder="输入员工名称搜索">
+                        <button type="submit" class="btn btn-primary">搜索</button>
+                    </div>
+
+                </form>
+
+
+                <form class="navbar-form navbar-left" th:action="@{/emp/search(type=2)}" method="post">
+                    <div class="form-group">
+                        <label class="form-inline" />部门搜索：
+                        <input style="box-sizing: border-box;vertical-align: top" id="search" name="search" type="text" class="form-control" placeholder="输入部门名称搜索">
+                        <button type="submit" class="btn btn-primary">搜索</button>
+                    </div>
+
+                </form>
+
+                <form class="navbar-form navbar-left" th:action="@{/emp/searchtime}" method="post">
+                    <div class="form-group">
+                        <label class="form-inline" />入职时间：
+                        <input style="box-sizing: border-box;vertical-align: top" required="required"  name="search1" type="date" class="form-control" >----
+                        <input style="box-sizing: border-box;vertical-align: top" required="required"  name="search2" type="date" class="form-control" >
+                        <button type="submit" class="btn btn-primary">搜索</button>
+                    </div>
+
+                </form>
+
+                <h2><a style="float: right" class="btn btn-primary" href="#" onclick="del()">删除选中</a></h2>
+                <h2><a style="float: right;margin-right: 10px;" class="btn btn-primary" href="#" id="deletebefore" onclick="de()">批量删除</a></h2>
+                <h2><a style="float: right;margin-right: 10px;" class="btn btn-primary" href="#" id="btn" >导出Excel</a></h2>
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12 col-xs-12">
+                        <div class="widget">
+                            <div class="widget-body">
+                                <div class="flip-scroll">
+                                    <table class="table table-bordered table-hover" id="tab">
+                                        <thead class="">
+                                        <tr>
+                                            <th style="display: none">
+                                                <input type="checkbox" name="checkId1" id="checkId1" onclick="se()" />
+                                            </th>
+                                            <th class="text-center" width="4%">ID</th>
+                                            <th class="text-center">员工名称</th>
+                                            <th class="text-center">员工年龄</th>
+                                            <th class="text-center">员工性别</th>
+                                            <th class="text-center">员工电话</th>
+                                            <th class="text-center">员工学历</th>
+                                            <th class="text-center">部门名称</th>
+                                            <th class="text-center">职位</th>
+                                            <th class="text-center">入职时间</th>
+                                            <th class="text-center">状态</th>
+                                            <th class="text-center">员工住址</th>
+                                            <th class="text-center" width="14%">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        <tr th:each="emps : ${emp.list} ">
+                                            <td style="display: none">
+                                                <input  type="checkbox" name="checkId" id="checkId" th:value="${emps.emp_id}" />
+                                            </td>
+                                            <td align="center" th:text="${emps.emp_id}"></td>
+                                            <td align="center" th:text="${emps.emp_name}"></td>
+                                            <td align="center" th:text="${emps.age}"></td>
+                                            <td align="center" th:text="${emps.sex==0?'女':'男'}"></td>
+                                            <td align="center" th:text="${emps.phone}"></td>
+                                            <td align="center" th:text="${emps.education}"></td>
+                                            <td align="center" th:text="${emps.department_name}"></td>
+                                            <td align="center" th:text="${emps.job_name}"></td>
+                                            <td align="center" th:text="${emps.join_date}"></td>
+                                            <td align="center" th:text="${emps.active==0?'离职':'在职'}"></td>
+                                            <td align="center" th:text="${emps.address}"></td>
+                                            <td align="center">
+                                                <a  href="" th:href="@{/emp/editbefore(emp_id=${emps.emp_id})}" class="btn btn-primary btn-sm shiny">
+                                                    <i class="fa fa-edit"></i> 编辑
+                                                </a>
+                                                <a href="#"  th:href="@{/emp/delete(emp_id=${emps.emp_id})}"  id="delect" class="btn btn-danger btn-sm shiny" onClick="return confirm('确定删除?');">
+                                                    <i class="fa fa-trash-o"></i> 删除
+                                                </a>
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="modal-footer no-margin-top">
+                                    <div class="col-md-6">
+                                        当前第 [[${emp.pageNum}]]页,共 [[${emp.pages}]] 页.一共 [[${emp.total}]] 条记录
+                                    </div>
+
+                                    <ul class="pagination pull-right no-margin">
+                                        <li th:if="${emp.hasPreviousPage}">
+                                            <a th:href="@{/emp/search(pageNum=1,type=${type},search=${search})}">首页</a>
+                                        </li>
+
+                                        <li class="prev" th:if="${emp.hasPreviousPage}">
+                                            <a th:href="@{/emp/search(pageNum=${emp.prePage},type=${type},search=${search})}">
+                                                <i class="ace-icon fa fa-angle-double-left"></i>
+                                            </a>
+                                        </li>
+                                        <!--遍历条数-->
+                                        <li th:each="nav:${emp.navigatepageNums}">
+                                            <a th:href="@{/emp/search(pageNum=${nav},type=${type},search=${search})}" th:text="${nav}" th:if="${nav != emp.pageNum}"></a>
+                                            <span style="font-weight: bold;background: #6faed9;" th:if="${nav == emp.pageNum}" th:text="${nav}" ></span>
+                                        </li>
+
+                                        <li class="next" th:if="${emp.hasNextPage}">
+                                            <a th:href="@{/emp/search(pageNum=${emp.nextPage},type=${type},search=${search})}">
+                                                <i class="ace-icon fa fa-angle-double-right"></i>
+                                            </a>
+                                        </li>
+
+                                        <li th:if="${emp.hasNextPage}">
+                                            <a th:href="@{/emp/search(pageNum=${emp.pages},type=${type},search=${search})}">尾页</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /Page Body -->
+        </div>
+        <!-- /Page Content -->
+    </div>
+</div>
+
+<!--Basic Scripts-->
+<script src="/static/style/jquery_002.js" th:src="@{/style/jquery_002.js}"></script>
+<script src="/static/style/bootstrap.js" th:src="@{/style/bootstrap.js}"></script>
+<script src="/static/style/jquery.js" th:src="@{/style/jquery.js}"></script>
+<!--Beyond Scripts-->
+<script src="/static/style/beyond.js" th:src="@{/style/beyondthe.js}"></script>
+<script src="" th:src="@{/style/jquery.table2excel.js}"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#btn").click(function(){
+            $("#tab").table2excel({
+                // 不被导出的表格行的CSS class类
+                exclude: ".noExl",
+                // 导出的Excel文档的名称，（没看到作用）
+                name: "Excel Document Name",
+                // Excel文件的名称
+                filename: "员工列表"
+            });
+        });
+    });
+
+</script>
+
+</body></html>
